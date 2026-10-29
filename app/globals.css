@@ -1,26 +1,166 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-brand-violet: #6d28d9;
+  --color-brand-orange: #f97316;
+  --color-brand-bg: #f8fafc;
+  --color-brand-dark: #0f172a;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #f8fafc;
+}
+
+.btn {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--color-brand-orange);
+  transform: scaleX(0);
+  transition: transform 0.35s ease;
+  z-index: 0;
+}
+
+.btn-sweep-left::before {
+  transform-origin: left;
+}
+
+.btn-sweep-right::before {
+  transform-origin: right;
+}
+
+.btn-sweep-top::before,
+.btn-sweep-bottom::before {
+  transform: scaleY(0);
+}
+
+.btn-sweep-top::before {
+  transform-origin: top;
+}
+
+.btn-sweep-bottom::before {
+  transform-origin: bottom;
+}
+
+.btn-sweep-left:hover::before,
+.btn-sweep-right:hover::before {
+  transform: scaleX(1);
+}
+
+.btn-sweep-top:hover::before,
+.btn-sweep-bottom:hover::before {
+  transform: scaleY(1);
+}
+
+.card-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-lift:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 30px rgba(15, 23, 42, 0.12);
+}
+
+.tilt-wrap {
+  perspective: 1000px;
+}
+
+.tilt-card {
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, #6d28d9, #f97316);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(60px);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+@keyframes toast-in {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.toast-in {
+  animation: toast-in 0.3s ease;
+}
+
+@keyframes featured-slide {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.featured-marquee {
+  animation: featured-slide 45s linear infinite;
+}
+
+.featured-marquee:hover {
+  animation-play-state: paused;
+}
+
+@keyframes product-3d-in {
+  from {
+    opacity: 0;
+    transform: perspective(1000px) rotateY(-18deg) rotateX(6deg) translateY(40px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(1000px) rotateY(0deg) rotateX(0deg) translateY(0px) scale(1);
+  }
+}
+
+.product-3d {
+  animation: product-3d-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.product-3d-wrap {
+  perspective: 1200px;
+}
+
+.product-3d-img {
+  transition: transform 0.6s ease;
+  transform-style: preserve-3d;
+}
+
+.product-3d-wrap:hover .product-3d-img {
+  transform: rotateY(10deg) rotateX(5deg) scale(1.04);
 }
