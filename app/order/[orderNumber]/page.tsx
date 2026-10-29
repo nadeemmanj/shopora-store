@@ -46,6 +46,10 @@ async function OrderDetailContent({ params }: { params: Promise<{ orderNumber: s
             ))}
           </div>
           <p className="text-sm text-slate-600 mt-4">Current status: {order.status}</p>
+          <Link href={`/order/${order.orderNumber}/invoice`} className="inline-block mt-4 bg-brand-dark text-white px-6 py-2.5 rounded-full text-sm font-semibold">
+            Print / Download Invoice
+          </Link>
+
         </div>
       )}
 

@@ -19,6 +19,7 @@ export default function CheckoutPage() {
   const [couponInput, setCouponInput] = useState("");
   const [couponCode, setCouponCode] = useState("");
   const [couponPercent, setCouponPercent] = useState(0);
+  const [paymentMethod, setPaymentMethod] = useState<"COD" | "CARD">("COD");
   const [loading, setLoading] = useState(false);
 
   const discount = (subtotal * couponPercent) / 100;
@@ -48,16 +49,31 @@ export default function CheckoutPage() {
       return;
     }
     setLoading(true);
+    const payload = {
+      items: cart.map((i) => ({ slug: i.slug, variant: i.variant, quantity: i.quantity })),
+      customer: { name, phone, address, city },
+      coupon: couponCode,
+    };
     try {
+      if (paymentMethod === "CARD") {
+        const res = await fetch("/api/stripe/create-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.url) {
+          showToast(data.error || "Stripe session failed", "error");
+          setLoading(false);
+          return;
+        }
+        window.location.href = data.url;
+        return;
+      }
       const res = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          items: cart.map((i) => ({ slug: i.slug, variant: i.variant, quantity: i.quantity })),
-          customer: { name, phone, address, city },
-          coupon: couponCode,
-          paymentMethod: "COD",
-        }),
+        body: JSON.stringify({ ...payload, paymentMethod: "COD" }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -76,7 +92,7 @@ export default function CheckoutPage() {
       showToast("Order placed successfully");
       router.push(`/order/${data.orderNumber}`);
     } catch {
-      showToast("Order failed, please try again", "error");
+      showToast("Something went wrong, please try again", "error");
       setLoading(false);
     }
   };
@@ -99,7 +115,6 @@ export default function CheckoutPage() {
   return (
     <div className="max-w-7xl mx-auto px-6 py-12">
       <h1 className="text-3xl font-extrabold">Checkout</h1>
-      <p className="text-slate-600 mt-1">Payment: Cash on Delivery. Card payment will come in Phase 5.</p>
 
       <form onSubmit={handleSubmit} className="grid lg:grid-cols-3 gap-6 mt-6">
         <div className="lg:col-span-2 bg-white border rounded-2xl p-6 space-y-4">
@@ -126,6 +141,36 @@ export default function CheckoutPage() {
               </p>
             )}
           </div>
+
+          <div>
+            <label className="font-semibold text-sm">Payment Method</label>
+            <div className="grid grid-cols-2 gap-3 mt-2">
+              <button
+                type="button"
+                onClick={() => setPaymentMethod("COD")}
+                className={`border rounded-xl p-4 text-left ${paymentMethod === "COD" ? "border-brand-violet bg-violet-50" : ""}`}
+              >
+                <p className="font-bold text-sm">Cash on Delivery</p>
+                <p className="text-xs text-slate-600 mt-1">Pay cash when your order arrives.</p>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPaymentMethod("CARD")}
+                className={`border rounded-xl p-4 text-left ${paymentMethod === "CARD" ? "border-brand-violet bg-violet-50" : ""}`}
+              >
+                <p className="font-bold text-sm">Card (Test Mode)</p>
+                <p className="text-xs text-slate-600 mt-1">Pay online with a test card. No real money.</p>
+              </button>
+            </div>
+            {paymentMethod === "CARD" && (
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mt-3 text-sm">
+                <p className="font-semibold">Stripe Test Mode</p>
+                <p className="text-slate-700 mt-1">
+                  Use card <span className="font-mono font-bold">4242 4242 4242 4242</span>, any future expiry date, any CVC. You will be redirected to Stripe's secure test page.
+                </p>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="bg-white border rounded-2xl p-6 h-fit">
@@ -147,7 +192,7 @@ export default function CheckoutPage() {
           <div className="flex justify-between mt-2 text-sm"><span>Delivery</span><span>{delivery === 0 ? "FREE" : `$${delivery.toFixed(2)}`}</span></div>
           <div className="flex justify-between mt-4 font-bold text-lg border-t pt-4"><span>Total</span><span>${total.toFixed(2)}</span></div>
           <button type="submit" disabled={loading} className="w-full mt-6 bg-brand-violet text-white py-3 rounded-full font-semibold disabled:opacity-50">
-            {loading ? "Placing Order..." : "Place Order (Cash on Delivery)"}
+            {loading ? "Please wait..." : paymentMethod === "CARD" ? "Pay with Card (Test)" : "Place Order (Cash on Delivery)"}
           </button>
         </div>
       </form>

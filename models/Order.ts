@@ -24,6 +24,7 @@ export interface IOrder extends Document {
   total: number;
   coupon: string;
   paymentMethod: string;
+  stripeSessionId?: string;
   status: string;
   createdAt: Date;
   updatedAt: Date;
@@ -54,6 +55,7 @@ const OrderSchema = new Schema<IOrder>(
     total: { type: Number, required: true },
     coupon: { type: String, default: "" },
     paymentMethod: { type: String, default: "COD" },
+    stripeSessionId: { type: String, default: undefined },
     status: {
       type: String,
       enum: ["Placed", "Packed", "Shipped", "Delivered", "Cancelled"],
