@@ -31,6 +31,8 @@ export default function Navbar() {
     return () => window.removeEventListener("hashchange", updateHash);
   }, [pathname]);
 
+   if (pathname.startsWith("/admin")) return null;
+
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/" && hash === "";
     if (href === "/shop") return pathname.startsWith("/shop");

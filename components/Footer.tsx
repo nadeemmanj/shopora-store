@@ -2,8 +2,13 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+
 
 export default function Footer() {
+  const pathname = usePathname();
+  if (pathname.startsWith("/admin")) return null;
+
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
 

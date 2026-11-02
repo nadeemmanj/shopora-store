@@ -44,7 +44,7 @@ export async function buildOrder(input: {
   }
 
   const couponCode = (coupon || "").trim().toUpperCase();
-  const percent = couponCode ? getCouponPercent(couponCode) : 0;
+  const percent = couponCode ? await getCouponPercent(couponCode) : 0;
   const discount = (subtotal * percent) / 100;
   const delivery = subtotal - discount >= 100 ? 0 : 5;
   const total = subtotal - discount + delivery;

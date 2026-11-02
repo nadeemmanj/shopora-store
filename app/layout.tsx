@@ -23,7 +23,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <Navbar />
           </Suspense>
           <main>{children}</main>
-          <Footer />
+          <Suspense fallback={<div className="h-40 bg-brand-dark" />}>
+            <Footer />
+          </Suspense>
           </CartProvider>
         </ToastProvider>
       </body>

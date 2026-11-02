@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     const slugs = items.map((i: any) => i.slug);
     const products = await Product.find({ slug: { $in: slugs } });
     const couponCode = (coupon || "").trim().toUpperCase();
-    const percent = couponCode ? getCouponPercent(couponCode) : 0;
+    const percent = couponCode ? await getCouponPercent(couponCode) : 0;
 
     const line_items: any[] = [];
     let discountedSubtotal = 0;
