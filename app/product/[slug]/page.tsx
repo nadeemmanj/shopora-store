@@ -6,6 +6,8 @@ import ProductCard from "../../../components/ProductCard";
 import ProductOptions from "../../../components/ProductOptions";
 import { getProductBySlug, getProducts } from "../../../lib/products";
 import { getProductOptions } from "../../../lib/productOptions";
+import Reviews from "../../../components/Reviews";
+
 
 async function ProductDetailContent({
   params,
@@ -66,6 +68,8 @@ async function ProductDetailContent({
           <p><span className="font-semibold">Rating: </span>{product.rating} / 5</p>
         </div>
       </div>
+
+      <Reviews slug={product.slug} />
 
       {related.length > 0 && (
         <div className="mt-12">

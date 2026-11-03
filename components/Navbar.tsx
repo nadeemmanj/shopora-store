@@ -4,6 +4,8 @@ import { useEffect, useState, type FormEvent, type MouseEvent } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
+import AuthButtons from "./AuthButtons";
+
 
 const NavbarIcons = dynamic(() => import("./NavbarIcons"), {
   ssr: false,
@@ -31,7 +33,8 @@ export default function Navbar() {
     return () => window.removeEventListener("hashchange", updateHash);
   }, [pathname]);
 
-   if (pathname.startsWith("/admin")) return null;
+   if (pathname.startsWith("/admin") || pathname === "/login" || pathname === "/signup") return null;
+
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/" && hash === "";
@@ -133,7 +136,11 @@ export default function Navbar() {
           </form>
 
           <div className="flex items-center gap-3">
-            <NavbarIcons />
+              <NavbarIcons />
+              <div className="hidden md:block">
+                <AuthButtons />
+              </div>
+
             <button
               onClick={() => setOpen(!open)}
               className="md:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5"
@@ -204,6 +211,7 @@ export default function Navbar() {
           </nav>
 
           <form onSubmit={handleSearch} className="mt-6 flex gap-2">
+            
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -214,6 +222,8 @@ export default function Navbar() {
               Go
             </button>
           </form>
+
+          <AuthButtons mobile onNavigate={() => setOpen(false)} />
         </div>
       </div>
     </>

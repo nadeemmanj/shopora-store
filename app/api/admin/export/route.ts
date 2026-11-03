@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "../../../../lib/mongodb";
 import Order from "../../../../models/Order";
-import {Product} from "../../../../models/Product";
+import { Product } from "../../../../models/Product";
 import * as XLSX from "xlsx";
+import Newsletter from "../../../../models/Newsletter";
 
 function toCSV(rows: any[]): string {
   if (!rows.length) return "";
@@ -36,6 +37,12 @@ export async function GET(req: Request) {
       c.spent = Math.round((c.spent + o.total) * 100) / 100;
     }
     rows = [...map.values()];
+  } else if (type === "newsletter") {
+    const subs = (await Newsletter.find({}).sort({ createdAt: -1 }).lean()) as any[];
+    rows = subs.map((s: any) => ({
+      email: s.email,
+      subscribed: new Date(s.createdAt).toISOString().slice(0, 10),
+    }));
   } else {
     const orders = (await Order.find({}).sort({ createdAt: -1 }).lean()) as any[];
     rows = orders.map((o) => ({

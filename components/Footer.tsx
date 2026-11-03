@@ -4,22 +4,36 @@ import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-
 export default function Footer() {
   const pathname = usePathname();
-  if (pathname.startsWith("/admin")) return null;
-
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleSubscribe = (e: FormEvent) => {
+  if (pathname.startsWith("/admin") || pathname === "/login" || pathname === "/signup") return null;
+
+
+  const handleSubscribe = async (e: FormEvent) => {
     e.preventDefault();
     if (!email.includes("@")) {
       setMessage("Please enter a valid email address.");
       return;
     }
-    setMessage("Subscribed successfully. Thank you!");
-    setEmail("");
+    try {
+      const r = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const d = await r.json();
+      if (d.ok) {
+        setMessage("Subscribed successfully. Thank you!");
+        setEmail("");
+      } else {
+        setMessage(d.error || "Subscription failed. Please try again.");
+      }
+    } catch {
+      setMessage("Something went wrong. Please try again.");
+    }
   };
 
   return (

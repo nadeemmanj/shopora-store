@@ -3,7 +3,10 @@
 import { useEffect, useState } from "react";
 import HeroSlider from "../components/HeroSlider";
 import ProductCard from "../components/ProductCard";
+
 import type { ProductData } from "../types";
+import Testimonials from "../components/Testimonials";
+
 
 const categories = [
   {
@@ -209,6 +212,8 @@ export default function Home() {
           ))}
         </div>
       </section>
+      <Testimonials />
+
     </>
   );
 }

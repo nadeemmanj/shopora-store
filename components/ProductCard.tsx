@@ -12,7 +12,7 @@ export default function ProductCard({ product }: { product: ProductData }) {
   const wished = loaded && isWishlisted(product.slug);
 
   return (
-    <div className="card-lift bg-white rounded-2xl shadow-sm border overflow-hidden relative">
+    <div className="card-lift bg-white rounded-2xl shadow-sm border overflow-hidden relative flex flex-col h-115">
       <Link href={`/product/${product.slug}`} className="block relative overflow-hidden">
         <img src={product.image} alt={product.name} className="w-full h-60 object-cover hover:scale-105 transition duration-500" />
         {product.badge && (
@@ -31,9 +31,9 @@ export default function ProductCard({ product }: { product: ProductData }) {
         {wished ? "♥" : "♡"}
       </button>
 
-      <div className="p-4">
+      <div className="p-4 flex flex-col flex-1">
         <p className="text-xs text-slate-500">{product.category}</p>
-        <Link href={`/product/${product.slug}`} className="font-bold hover:text-brand-violet">
+        <Link href={`/product/${product.slug}`} className="font-bold hover:text-brand-violet line-clamp-2 min-h-12">
           {product.name}
         </Link>
         <p className="text-sm text-amber-500 mt-1">★ {product.rating} / 5</p>
@@ -44,7 +44,7 @@ export default function ProductCard({ product }: { product: ProductData }) {
         <p className={`text-xs mt-1 ${product.stock <= 0 ? "text-red-600" : product.stock <= 5 ? "text-brand-orange" : "text-green-600"}`}>
           {product.stock <= 0 ? "Out of stock" : product.stock <= 5 ? `Hurry! Only ${product.stock} left` : `${product.stock} in stock`}
         </p>
-        <div className="flex gap-2 mt-3">
+        <div className="flex gap-2 mt-auto pt-3">
           <AddToCartButton product={product} variant={options[0] || "Standard"} quantity={1} />
           <Link href={`/product/${product.slug}`} className="border px-4 py-2 rounded-full text-sm font-semibold">
             Details

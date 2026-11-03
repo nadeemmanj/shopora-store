@@ -5,6 +5,7 @@ const TYPES = [
   { t: "orders", label: "Orders" },
   { t: "products", label: "Products" },
   { t: "customers", label: "Customers" },
+   { t: "newsletter", label: "Newsletter" },
 ];
 const FORMATS = ["csv", "xlsx", "json"];
 
